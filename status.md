@@ -1,1 +1,1 @@
-Current Status: Learning Advanced Git 3
+Current Status: Learning Intermediate & Advanced Git
