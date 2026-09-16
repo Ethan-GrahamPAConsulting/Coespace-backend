@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX idx_bookings ON bookings (desk_id, booking_date);

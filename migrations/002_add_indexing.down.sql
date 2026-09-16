@@ -1,0 +1,1 @@
+alter table bookings drop index idx_bookings;
