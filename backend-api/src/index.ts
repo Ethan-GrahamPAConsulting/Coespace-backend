@@ -1,9 +1,13 @@
-import Express = require("express");
+import express from "express";
+import bookingsRouter from "./routes/bookings";
+import router from "./routes/bookings";
 
-const app = Express();
-const PORT = 5000;
+const PORT = Number(process.env.PORT) || 3000;
+const app = express();
+app.use(express.json());
+app.use(bookingsRouter);
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.status(200).json({ status: 'active', message: 'CoSpace API is running' });
 });
 
