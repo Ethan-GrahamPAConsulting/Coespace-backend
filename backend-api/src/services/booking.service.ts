@@ -1,0 +1,43 @@
+import { type Booking } from "../models/booking.model";
+import { BookingRepository } from "../repositories/booking.repository";
+
+export class BookingService {
+  constructor(private repository: BookingRepository = new BookingRepository()) {}
+
+  findAll(): Booking[] {
+    return this.repository.findAll();
+  }
+
+  findById(id: number): Booking | undefined {
+    return this.repository.findById(id);
+  }
+
+  create(booking: Omit<Booking, "id">): Booking {
+    if (booking.desk.length < 3) {
+      throw new Error("Desk name must be at least 3 characters long");
+    }
+
+    return this.repository.create(booking);
+  }
+
+  update(id: number, data: Partial<Omit<Booking, "id">>): Booking | undefined {
+    if (data.desk !== undefined && data.desk.length < 3) {
+      throw new Error("Desk name must be at least 3 characters long");
+    }
+
+    return this.repository.update(id, data);
+  }
+
+  delete(id: number): Booking | undefined {
+    return this.repository.delete(id);
+  }
+
+  toggleBooked(id: number): Booking | undefined {
+    const booking = this.repository.findById(id);
+    if (!booking) {
+      return undefined;
+    }
+
+    return this.repository.update(id, { booked: !booking.booked });
+  }
+}
