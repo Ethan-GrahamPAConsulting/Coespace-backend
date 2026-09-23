@@ -1,0 +1,11 @@
+import { Request, Response, NextFunction } from "express";
+
+export function auth(req: Request, res: Response, next: NextFunction) {
+  const token = req.headers["authorization"];
+
+  if (token === "super-secret-key") {
+    return next();
+  }
+
+  res.status(401).json({ error: "Unauthorized" });
+}
