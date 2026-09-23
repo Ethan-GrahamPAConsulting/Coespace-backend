@@ -1,5 +1,6 @@
 import { type Booking } from "../models/booking.model";
 import { BookingRepository } from "../repositories/booking.repository";
+import { NotFoundError } from "../errors";
 
 export class BookingService {
   constructor(private repository: BookingRepository = new BookingRepository()) {}
@@ -29,16 +30,26 @@ export class BookingService {
     return this.repository.create(booking);
   }
 
-  update(id: number, data: Partial<Omit<Booking, "id">>): Booking | undefined {
+  update(id: number, data: Partial<Omit<Booking, "id">>): Booking {
     if (data.desk !== undefined && data.desk.length < 3) {
       throw new Error("Desk name must be at least 3 characters long");
     }
 
-    return this.repository.update(id, data);
+    const updated = this.repository.update(id, data);
+    if (!updated) {
+      throw new NotFoundError(`Booking with id ${id} not found`);
+    }
+
+    return updated;
   }
 
-  delete(id: number): Booking | undefined {
-    return this.repository.delete(id);
+  delete(id: number): Booking {
+    const deleted = this.repository.delete(id);
+    if (!deleted) {
+      throw new NotFoundError(`Booking with id ${id} not found`);
+    }
+
+    return deleted;
   }
 
   toggleBooked(id: number): Booking | undefined {

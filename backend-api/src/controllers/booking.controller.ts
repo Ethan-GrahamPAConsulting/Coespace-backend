@@ -1,12 +1,14 @@
 import { type Request, type Response } from "express";
 import { BookingService } from "../services/booking.service";
+import { NotFoundError } from "../errors";
 
 export class BookingController {
   constructor(private service: BookingService = new BookingService()) {}
 
   findAll = (req: Request, res: Response) => {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const requestedLimit = Math.max(1, Number(req.query.limit) || 10);
+    const limit = Math.min(requestedLimit, 50);
 
     res.json(this.service.getPaginatedShifts(page, limit));
   };
@@ -36,25 +38,27 @@ export class BookingController {
       const id = Number(req.params.id);
       const updated = this.service.update(id, req.body);
 
-      if (!updated) {
-        return res.status(404).json({ error: "Booking not found" });
-      }
-
       res.json(updated);
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      }
       res.status(400).json({ error: (error as Error).message });
     }
   };
 
   delete = (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-    const deleted = this.service.delete(id);
+    try {
+      const id = Number(req.params.id);
+      const deleted = this.service.delete(id);
 
-    if (!deleted) {
-      return res.status(404).json({ error: "Booking not found" });
+      res.json(deleted);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: error.message });
+      }
+      res.status(400).json({ error: (error as Error).message });
     }
-
-    res.json(deleted);
   };
 
   toggleBooked = (req: Request, res: Response) => {
