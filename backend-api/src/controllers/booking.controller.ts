@@ -5,7 +5,10 @@ export class BookingController {
   constructor(private service: BookingService = new BookingService()) {}
 
   findAll = (req: Request, res: Response) => {
-    res.json(this.service.findAll());
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    res.json(this.service.getPaginatedShifts(page, limit));
   };
 
   findById = (req: Request, res: Response) => {

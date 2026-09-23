@@ -12,6 +12,15 @@ export class BookingService {
     return this.repository.findById(id);
   }
 
+  getPaginatedShifts(page: number, limit: number): { data: Booking[]; meta: { total: number; page: number; limit: number; totalPages: number } } {
+    const total = this.repository.count();
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+    const data = this.repository.findPaginated(skip, limit);
+
+    return { data, meta: { total, page, limit, totalPages } };
+  }
+
   create(booking: Omit<Booking, "id">): Booking {
     if (booking.desk.length < 3) {
       throw new Error("Desk name must be at least 3 characters long");

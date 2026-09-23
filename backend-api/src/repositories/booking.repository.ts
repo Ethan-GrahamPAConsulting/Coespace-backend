@@ -15,6 +15,14 @@ export class BookingRepository {
     return this.bookings.find((booking) => booking.id === id);
   }
 
+  findPaginated(skip: number, limit: number): Booking[] {
+    return this.bookings.slice(skip, skip + limit);
+  }
+
+  count(): number {
+    return this.bookings.length;
+  }
+
   create(booking: Omit<Booking, "id">): Booking {
     const lastBooking = this.bookings[this.bookings.length - 1];
     const newId = lastBooking ? lastBooking.id + 1 : 1;
