@@ -36,4 +36,9 @@ app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
 
+app.get("/boom-forbidden", () => {
+   throw new ForbiddenError("You do not have permission to access this resource");
+});
+ 
+
 export = app;
