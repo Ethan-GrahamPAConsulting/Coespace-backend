@@ -14,6 +14,8 @@ app.use(logger);
 app.use(bookingRoutes);
 
 app.get("/", (req, res) => {
+  throw new Error('Database server exploded')
+ 
   res.status(HTTP_STATUS.OK).json({ status: "active", message: "CoSpace API is running" });
 });
 // Route to trigger a test NotFoundError
@@ -39,6 +41,8 @@ app.listen(PORT, () => {
 app.get("/boom-forbidden", () => {
    throw new ForbiddenError("You do not have permission to access this resource");
 });
+
+
  
 
 export = app;
