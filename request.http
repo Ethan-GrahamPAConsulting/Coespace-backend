@@ -1,7 +1,7 @@
 ## CoSpace API Requests
  
 ### get all bookings
-GET http://localhost:5000/bookings
+GET http://localhost:5000/
  
 ### get one booking
 GET http://localhost:5000/bookings/1
@@ -73,4 +73,13 @@ Authorization: Bearer super-secret-key
   "booking_date": "2026-11-29",
   "active": true
 }
+
+### trigger forbidden error
+POST http://localhost:5000/boom-forbidden
+Content-Type: application/json
+
+{"message": "This should trigger a forbidden error"}
+
+### throw forbidden error - 403
+GET http://localhost:5000/boom-forbidden
  
