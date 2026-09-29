@@ -5,7 +5,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { HTTP_STATUS } from "./constants/httpStatus";
 import { NOTFOUND } from "node:dns";
 import { NotFoundError } from "./errors";
-
+import { ForbiddenError } from "./errors/forbiddenError";
 const PORT = Number(process.env.PORT) || 5000;
 const app = express();
 
@@ -24,6 +24,10 @@ app.get("/boom-app-error", () => {
 // Temporary: trigger a plain, unexpected error to verify sanitized 500 response
 app.get("/boom-unexpected", () => {
   throw new Error("db connection string: postgres://user:pass@internal-host/db");
+});
+
+app.post("/boom-forbidden", () => {
+  throw new ForbiddenError("You do not have permission to perform this action");
 });
 
 app.use(errorHandler);
