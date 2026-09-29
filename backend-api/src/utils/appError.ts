@@ -1,3 +1,5 @@
+import { HTTP_STATUS } from "../constants/httpStatus";
+
 export class AppError extends Error {
   statusCode: number;
   status: "fail" | "error";
@@ -7,9 +9,10 @@ export class AppError extends Error {
     super(message);
     this.name = "AppError";
     this.statusCode = statusCode;
-    this.status = statusCode >= 400 && statusCode < 500 ? "fail" : "error";
+    this.status = statusCode >= HTTP_STATUS.BAD_REQUEST && statusCode < HTTP_STATUS.INTERNAL_SERVER_ERROR ? "fail" : "error";
     this.isOperational = true;
 
     Error.captureStackTrace(this, AppError);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }

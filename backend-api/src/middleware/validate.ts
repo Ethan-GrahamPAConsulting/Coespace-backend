@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
+import { HTTP_STATUS } from "../constants/httpStatus";
 
 export function validateSchema(schema: ZodSchema) {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      return res.status(400).json({ error: "Validation failed", details: result.error.issues });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Validation failed", details: result.error.issues });
     }
 
     req.body = result.data;
@@ -19,7 +20,7 @@ export function validate(requiredFields: string[]) {
     const missingFields = requiredFields.filter((field) => req.body[field] === undefined);
 
     if (missingFields.length > 0) {
-      return res.status(400).json({ error: "Missing required fields", missingFields });
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Missing required fields", missingFields });
     }
 
     next();
