@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { BookingService } from "../services/booking.service";
 import { NotFoundError } from "../errors";
+import { HTTP_STATUS } from "../constants/httpStatus";
 
 export class BookingController {
   constructor(private service: BookingService = new BookingService()) {}
@@ -18,7 +19,7 @@ export class BookingController {
     const booking = this.service.findById(id);
 
     if (!booking) {
-      return res.status(404).json({ error: "Booking not found" });
+      return res.status(HTTP_STATUS.NOT_FOUND).json({ error: "Booking not found" });
     }
 
     res.json(booking);
@@ -27,9 +28,9 @@ export class BookingController {
   create = (req: Request, res: Response) => {
     try {
       const booking = this.service.create(req.body);
-      res.status(201).json(booking);
+      res.status(HTTP_STATUS.CREATED).json(booking);
     } catch (error) {
-      res.status(400).json({ error: (error as Error).message });
+      res.status(HTTP_STATUS.BAD_REQUEST).json({ error: (error as Error).message });
     }
   };
 
@@ -41,9 +42,9 @@ export class BookingController {
       res.json(updated);
     } catch (error) {
       if (error instanceof NotFoundError) {
-        return res.status(404).json({ error: error.message });
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ error: error.message });
       }
-      res.status(400).json({ error: (error as Error).message });
+      res.status(HTTP_STATUS.BAD_REQUEST).json({ error: (error as Error).message });
     }
   };
 
@@ -55,9 +56,9 @@ export class BookingController {
       res.json(deleted);
     } catch (error) {
       if (error instanceof NotFoundError) {
-        return res.status(404).json({ error: error.message });
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ error: error.message });
       }
-      res.status(400).json({ error: (error as Error).message });
+      res.status(HTTP_STATUS.BAD_REQUEST).json({ error: (error as Error).message });
     }
   };
 
@@ -66,7 +67,7 @@ export class BookingController {
     const updated = this.service.toggleBooked(id);
 
     if (!updated) {
-      return res.status(404).json({ error: "Booking not found" });
+      return res.status(HTTP_STATUS.NOT_FOUND).json({ error: "Booking not found" });
     }
 
     res.json(updated);
