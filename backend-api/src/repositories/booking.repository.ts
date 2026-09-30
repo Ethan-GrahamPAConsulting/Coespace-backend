@@ -1,59 +1,50 @@
-import { type Booking } from "../models/booking.model";
+import { Prisma } from "../generated/prisma/client";
+import { type Booking, type BookingCreateData, type BookingUpdateData } from "../models/booking.model";
+import { prisma } from "../utils/prisma";
+
+// Prisma raises this code when a where clause matches no row.
+const RECORD_NOT_FOUND = "P2025";
 
 export class BookingRepository {
-  private bookings: Booking[] = [
-    { id: 1, desk: "A1", floor: 1, date: "2026-09-22", booked: true },
-    { id: 2, desk: "B3", floor: 2, date: "2026-09-23", booked: true },
-    { id: 3, desk: "C5", floor: 3, date: "2026-09-24", booked: false },
-    { id: 4, desk: "D2", floor: 1, date: "2026-09-25", booked: true },
-    { id: 5, desk: "E4", floor: 2, date: "2026-09-26", booked: false },
-    { id: 6, desk: "F6", floor: 3, date: "2026-09-27", booked: true },
-    { id: 7, desk: "G1", floor: 1, date: "2026-09-28", booked: false },
-    { id: 8, desk: "H3", floor: 2, date: "2026-09-29", booked: true },
-  ];
-
-  findAll(): Booking[] {
-    return this.bookings;
+  findAll(): Promise<Booking[]> {
+    return prisma.booking.findMany({ orderBy: { id: "asc" } });
   }
 
-  findById(id: number): Booking | undefined {
-    return this.bookings.find((booking) => booking.id === id);
+  findById(id: number): Promise<Booking | null> {
+    return prisma.booking.findUnique({ where: { id } });
   }
 
-  findPaginated(skip: number, limit: number): Booking[] {
-    return this.bookings.slice(skip, skip + limit);
+  findPaginated(skip: number, limit: number): Promise<Booking[]> {
+    return prisma.booking.findMany({ skip, take: limit, orderBy: { id: "asc" } });
   }
 
-  count(): number {
-    return this.bookings.length;
+  count(): Promise<number> {
+    return prisma.booking.count();
   }
 
-  create(booking: Omit<Booking, "id">): Booking {
-    const lastBooking = this.bookings[this.bookings.length - 1];
-    const newId = lastBooking ? lastBooking.id + 1 : 1;
-
-    const newBooking: Booking = { id: newId, ...booking };
-    this.bookings.push(newBooking);
-    return newBooking;
+  create(data: BookingCreateData): Promise<Booking> {
+    return prisma.booking.create({ data });
   }
 
-  update(id: number, data: Partial<Omit<Booking, "id">>): Booking | undefined {
-    const booking = this.findById(id);
-    if (!booking) {
-      return undefined;
+  async update(id: number, data: BookingUpdateData): Promise<Booking | null> {
+    try {
+      return await prisma.booking.update({ where: { id }, data });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === RECORD_NOT_FOUND) {
+        return null;
+      }
+      throw error;
     }
-
-    Object.assign(booking, data);
-    return booking;
   }
 
-  delete(id: number): Booking | undefined {
-    const index = this.bookings.findIndex((booking) => booking.id === id);
-    if (index === -1) {
-      return undefined;
+  async delete(id: number): Promise<Booking | null> {
+    try {
+      return await prisma.booking.delete({ where: { id } });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === RECORD_NOT_FOUND) {
+        return null;
+      }
+      throw error;
     }
-
-    const [deletedBooking] = this.bookings.splice(index, 1);
-    return deletedBooking;
   }
 }
