@@ -1,13 +1,13 @@
 ## CoSpace API Requests
  
 ### get all bookings
-GET http://localhost:5000/
+GET http://localhost:5000/bookings
  
 ### get one booking
 GET http://localhost:5000/bookings/1
  
 ### get one booking paginated
-GET http://localhost:5000/bookings?page=2&limit=2
+GET http://localhost:5000/bookings?page=1&limit=2
  
 ### get one booking paginated
 GET http://localhost:5000/bookings?page=1&limit=999

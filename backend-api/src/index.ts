@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 import express from "express";
+import authRoutes from "./routes/auth.routes";
 import bookingRoutes from "./routes/booking.routes";
 import { logger } from "./middleware/logger";
 import { errorHandler } from "./middleware/errorHandler";
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(express.json());
 app.use(logger);
+app.use(authRoutes);
 app.use(bookingRoutes);
 
 app.get("/", (req, res) => {
