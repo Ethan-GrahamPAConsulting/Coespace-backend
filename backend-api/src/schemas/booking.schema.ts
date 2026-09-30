@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const createBookingSchema = z.object({
-  desk: z.string().trim().min(3).max(100),
-  floor: z.string().trim().min(5).max(200),
-  date: z.string().datetime(),
+  user_id: z.number().int().positive(),
+  desk_id: z.number().int().positive(),
+  booking_date: z.coerce.date(),
   active: z.boolean().optional().default(true),
 });

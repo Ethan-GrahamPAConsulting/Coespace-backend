@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import express from "express";
 import bookingRoutes from "./routes/booking.routes";
 import { logger } from "./middleware/logger";
