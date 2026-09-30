@@ -1,6 +1,6 @@
-import { type Booking, type BookingCreateData, type BookingUpdateData } from "../models/booking.model";
+import { type Booking, type BookingInput } from "../models/booking.model";
 import { BookingRepository } from "../repositories/booking.repository";
-import { NotFoundError } from "../errors";
+import { ForbiddenError, NotFoundError } from "../errors";
 
 export class BookingService {
   constructor(private repository: BookingRepository = new BookingRepository()) {}
@@ -22,12 +22,24 @@ export class BookingService {
     return { data, meta: { total, page, limit, totalPages } };
   }
 
-  create(booking: BookingCreateData): Promise<Booking> {
-    return this.repository.create(booking);
+  create(userId: number, booking: BookingInput): Promise<Booking> {
+    return this.repository.create({
+      booking_date: booking.booking_date,
+      ...(booking.active !== undefined ? { active: booking.active } : {}),
+      desk: { connect: { id: booking.desk_id } },
+      user: { connect: { id: userId } },
+    });
   }
 
-  async update(id: number, data: BookingUpdateData): Promise<Booking> {
-    const updated = await this.repository.update(id, data);
+  async update(userId: number, id: number, data: Partial<BookingInput>): Promise<Booking> {
+    await this.requireOwned(userId, id);
+
+    const updated = await this.repository.update(id, {
+      ...(data.booking_date !== undefined ? { booking_date: data.booking_date } : {}),
+      ...(data.active !== undefined ? { active: data.active } : {}),
+      ...(data.desk_id !== undefined ? { desk: { connect: { id: data.desk_id } } } : {}),
+    });
+
     if (!updated) {
       throw new NotFoundError(`Booking with id ${id} not found`);
     }
@@ -35,7 +47,9 @@ export class BookingService {
     return updated;
   }
 
-  async delete(id: number): Promise<Booking> {
+  async delete(userId: number, id: number): Promise<Booking> {
+    await this.requireOwned(userId, id);
+
     const deleted = await this.repository.delete(id);
     if (!deleted) {
       throw new NotFoundError(`Booking with id ${id} not found`);
@@ -44,12 +58,21 @@ export class BookingService {
     return deleted;
   }
 
-  async toggleBooked(id: number): Promise<Booking | null> {
-    const booking = await this.repository.findById(id);
-    if (!booking) {
-      return null;
-    }
+  async toggleBooked(userId: number, id: number): Promise<Booking | null> {
+    const booking = await this.requireOwned(userId, id);
 
     return this.repository.update(id, { active: !booking.active });
+  }
+
+  private async requireOwned(userId: number, id: number): Promise<Booking> {
+    const booking = await this.repository.findById(id);
+    if (!booking) {
+      throw new NotFoundError(`Booking with id ${id} not found`);
+    }
+    if (booking.user_id !== userId) {
+      throw new ForbiddenError("You do not have permission to modify this booking");
+    }
+
+    return booking;
   }
 }
