@@ -4,6 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>CoSpace | Desk booking</title>
+		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		<header>
@@ -44,7 +45,8 @@
 
 			<aside id="registration" aria-labelledby="registration-title">
 				<h2 id="registration-title">Create your account</h2>
-				<form action="#" method="post">
+				<p id="registration-warning" role="alert" aria-live="polite" hidden></p>
+				<form id="registration-form" action="#" method="post">
 					<div>
 						<label for="first-name">First name</label>
 						<input id="first-name" name="first_name" autocomplete="given-name" required>
@@ -65,5 +67,6 @@
 				</form>
 			</aside>
 		</main>
+		<script type="module" src="./dist/register.js"></script>
 	</body>
 </html>
