@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>CoSpace | Desk booking</title>
+	</head>
+	<body>
+		<header>
+			<a href="index.html" aria-label="CoSpace home">CoSpace</a>
+			<nav aria-label="Main navigation">
+				<ul>
+					<li><a href="#event">Upcoming event</a></li>
+					<li><a href="#registration">Register</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main>
+			<section aria-labelledby="dashboard-title">
+				<h1 id="dashboard-title">Desk booking</h1>
+				<p>Find a workspace for your next day at the BrightMedia office.</p>
+
+				<article class="product-card" id="event" aria-labelledby="event-title">
+					<h2 id="event-title">BrightMedia team day</h2>
+					<p>Join colleagues in the office for a day of planning and collaboration.</p>
+					<dl>
+						<div>
+							<dt>Date</dt>
+							<dd><time datetime="2026-10-15">Thursday, October 15, 2026</time></dd>
+						</div>
+						<div>
+							<dt>Location</dt>
+							<dd>BrightMedia office, Floor 2</dd>
+						</div>
+						<div>
+							<dt>Desks available</dt>
+							<dd>12</dd>
+						</div>
+					</dl>
+					<a href="#registration">Register for the team day</a>
+				</article>
+			</section>
+
+			<aside id="registration" aria-labelledby="registration-title">
+				<h2 id="registration-title">Create your account</h2>
+				<form action="#" method="post">
+					<div>
+						<label for="first-name">First name</label>
+						<input id="first-name" name="first_name" autocomplete="given-name" required>
+					</div>
+					<div>
+						<label for="last-name">Last name</label>
+						<input id="last-name" name="last_name" autocomplete="family-name" required>
+					</div>
+					<div>
+						<label for="email">Work email</label>
+						<input id="email" name="email" type="email" autocomplete="email" required>
+					</div>
+					<div>
+						<label for="password">Password</label>
+						<input id="password" name="password" type="password" autocomplete="new-password" required>
+					</div>
+					<button type="submit">Create account</button>
+				</form>
+			</aside>
+		</main>
+	</body>
+</html>
