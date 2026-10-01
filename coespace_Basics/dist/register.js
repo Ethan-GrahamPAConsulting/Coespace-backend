@@ -1,4 +1,3 @@
-"use strict";
 const form = document.querySelector("#registration-form");
 const warning = document.querySelector("#registration-warning");
 if (!form || !warning) {
@@ -56,3 +55,5 @@ form.addEventListener("submit", (event) => {
     warningElement.textContent = "";
     warningElement.hidden = true;
 });
+export {};
+//# sourceMappingURL=register.js.map
