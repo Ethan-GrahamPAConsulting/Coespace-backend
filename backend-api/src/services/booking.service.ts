@@ -1,4 +1,4 @@
-import { type Booking, type BookingInput } from "../models/booking.model";
+import { type Booking, type BookingInput, type BookingWithDesk } from "../models/booking.model";
 import { BookingRepository } from "../repositories/booking.repository";
 import { ForbiddenError, NotFoundError } from "../errors";
 
@@ -13,7 +13,7 @@ export class BookingService {
     return this.repository.findById(id);
   }
 
-  async getPaginatedShifts(page: number, limit: number): Promise<{ data: Booking[]; meta: { total: number; page: number; limit: number; totalPages: number } }> {
+  async getPaginatedShifts(page: number, limit: number): Promise<{ data: BookingWithDesk[]; meta: { total: number; page: number; limit: number; totalPages: number } }> {
     const total = await this.repository.count();
     const totalPages = Math.ceil(total / limit);
     const skip = (page - 1) * limit;
@@ -22,7 +22,7 @@ export class BookingService {
     return { data, meta: { total, page, limit, totalPages } };
   }
 
-  create(userId: number, booking: BookingInput): Promise<Booking> {
+  create(userId: number, booking: BookingInput): Promise<BookingWithDesk> {
     return this.repository.create({
       booking_date: booking.booking_date,
       ...(booking.active !== undefined ? { active: booking.active } : {}),

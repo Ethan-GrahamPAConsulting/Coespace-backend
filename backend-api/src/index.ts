@@ -1,8 +1,10 @@
 require('dotenv').config();
 
 import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import bookingRoutes from "./routes/booking.routes";
+import deskRoutes from "./routes/desk.routes";
 import { logger } from "./middleware/logger";
 import { errorHandler } from "./middleware/errorHandler";
 import { HTTP_STATUS } from "./constants/httpStatus";
@@ -12,10 +14,12 @@ import { ForbiddenError } from "./errors/forbiddenError";
 const PORT = Number(process.env.PORT) || 5000;
 const app = express();
 
+app.use(cors({ origin: process.env.COSPACE_WEB_ORIGIN || "http://localhost:3000" }));
 app.use(express.json());
 app.use(logger);
 app.use(authRoutes);
 app.use(bookingRoutes);
+app.use(deskRoutes);
 
 app.get("/", (req, res) => {
   throw new Error('Database server exploded')

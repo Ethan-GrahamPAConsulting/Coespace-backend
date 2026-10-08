@@ -1,5 +1,10 @@
 import { Prisma } from "../generated/prisma/client";
-import { type Booking, type BookingCreateData, type BookingUpdateData } from "../models/booking.model";
+import {
+  type Booking,
+  type BookingCreateData,
+  type BookingUpdateData,
+  type BookingWithDesk,
+} from "../models/booking.model";
 import { prisma } from "../utils/prisma";
 
 // Prisma raises this code when a where clause matches no row.
@@ -14,16 +19,24 @@ export class BookingRepository {
     return prisma.booking.findUnique({ where: { id } });
   }
 
-  findPaginated(skip: number, limit: number): Promise<Booking[]> {
-    return prisma.booking.findMany({ skip, take: limit, orderBy: { id: "asc" } });
+  findPaginated(skip: number, limit: number): Promise<BookingWithDesk[]> {
+    return prisma.booking.findMany({
+      skip,
+      take: limit,
+      orderBy: { id: "asc" },
+      include: { desk: { select: { name: true, floor: true } } },
+    });
   }
 
   count(): Promise<number> {
     return prisma.booking.count();
   }
 
-  create(data: BookingCreateData): Promise<Booking> {
-    return prisma.booking.create({ data });
+  create(data: BookingCreateData): Promise<BookingWithDesk> {
+    return prisma.booking.create({
+      data,
+      include: { desk: { select: { name: true, floor: true } } },
+    });
   }
 
   async update(id: number, data: BookingUpdateData): Promise<Booking | null> {
